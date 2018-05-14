@@ -46,6 +46,13 @@ This architecture aims to provide:
 
 The service **cryptography** also provides the ability to change a key and re-encrypt data with the new key.
 
+Schema
+------
+
+.. image:: docs/schema.png
+   :align: center
+   :alt: Look at that amazing schema ! Oh, wait...
+
 Usage
 -----
 
