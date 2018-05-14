@@ -1,0 +1,23 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[packages]
+
+secure-user-data = {path = ".", editable = true}
+
+
+[dev-packages]
+
+pytest = "*"
+ipython = "*"
+hupper = "*"
+watchdog = "*"
+
+
+[requires]
+
+python_version = "3.6"

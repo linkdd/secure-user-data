@@ -1,0 +1,76 @@
+version: '3'
+services:
+  database:
+    image: mvertes/alpine-mongo
+  cryptography:
+    build:
+      context: .
+      args:
+        MODE: development
+    command: sud-service cryptography
+    environment:
+      DEBUG: 1
+      PORT: 8000
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
+  app-key-store:
+    build:
+      context: .
+      args:
+        MODE: development
+    command: sud-service app-key-store
+    links:
+      - database
+      - cryptography
+    environment:
+      DEBUG: 1
+      PORT: 8000
+      CRYPTOGRAPHY_URL: http://cryptography:8000/
+      DATABASE_URL: mongodb://database:27017/app-key-store
+      APP_KEY_STORE_SECRET: 'bh-PeI88jBpUX4xm-2ZkmomLoIVmoJK5zVe2vMkR5Ps='
+    ports:
+      - 8001:8000
+    volumes:
+      - .:/app
+  user-key-store:
+    build:
+      context: .
+      args:
+        MODE: development
+    command: sud-service user-key-store
+    links:
+      - database
+      - cryptography
+      - app-key-store
+    environment:
+      DEBUG: 1
+      PORT: 8000
+      CRYPTOGRAPHY_URL: http://cryptography:8000/
+      APP_KEY_STORE_URL: http://app-key-store:8000/
+      DATABASE_URL: mongodb://database:27017/user-key-store
+    ports:
+      - 8002:8000
+  uidentifiable-data-store:
+    build:
+      context: .
+      args:
+        MODE: development
+    command: sud-service identifiable-data-store
+    links:
+      - database
+      - cryptography
+      - app-key-store
+      - user-key-store
+    environment:
+      DEBUG: 1
+      PORT: 8000
+      CRYPTOGRAPHY_URL: http://cryptography:8000/
+      APP_KEY_STORE_URL: http://app-key-store:8000/
+      USER_KEY_STORE_URL: http://user-key-store:8000/
+      DATABASE_URL: mongodb://database:27017/identifiable-data-store
+    ports:
+      - 8003:8000
+    volumes:
+      - .:/app
